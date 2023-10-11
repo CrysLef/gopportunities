@@ -23,27 +23,26 @@ func typeOf(v interface{}) string {
 }
 
 func (req *CreateOpeningRequest) Validate() error {
-
 	if req.Role == "" && req.Company == "" && req.Link == "" && req.Location == "" && req.Salary <= 0 && req.Remote == nil {
 		return fmt.Errorf("request body empty or malformed")
 	}
 	if req.Role == "" {
-		errParamIsRequired("role", typeOf(req.Role))
+		return errParamIsRequired("role", typeOf(req.Role))
 	}
 	if req.Company == "" {
-		errParamIsRequired("company", typeOf(req.Company))
+		return errParamIsRequired("company", typeOf(req.Company))
 	}
 	if req.Location == "" {
-		errParamIsRequired("location", typeOf(req.Location))
+		return errParamIsRequired("location", typeOf(req.Location))
 	}
 	if req.Link == "" {
-		errParamIsRequired("link", typeOf(req.Link))
+		return errParamIsRequired("link", typeOf(req.Link))
 	}
 	if req.Remote == nil {
-		errParamIsRequired("remote", typeOf(req.Remote))
+		return errParamIsRequired("remote", typeOf(req.Remote))
 	}
 	if req.Salary <= 0 {
-		errParamIsRequired("salary", typeOf(req.Salary))
+		return errParamIsRequired("salary", typeOf(req.Salary))
 	}
 	return nil
 }
