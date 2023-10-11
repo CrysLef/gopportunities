@@ -46,3 +46,19 @@ func (req *CreateOpeningRequest) Validate() error {
 	}
 	return nil
 }
+
+type UpdateOpeningRequest struct {
+	Role     string `json:"role"`
+	Company  string `json:"company"`
+	Location string `json:"location"`
+	Remote   *bool  `json:"remote"`
+	Link     string `json:"link"`
+	Salary   int64  `json:"salary"`
+}
+
+func (req *UpdateOpeningRequest) Validate() error {
+	if req.Role != "" || req.Company != "" || req.Link != "" || req.Location != "" || req.Salary > 0 || req.Remote != nil {
+		return nil
+	}
+	return fmt.Errorf("at least one field must be provided")
+}
