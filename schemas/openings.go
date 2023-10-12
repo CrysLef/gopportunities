@@ -16,7 +16,7 @@ type Opening struct {
 	Salary   int64
 }
 
-type OPeningResponse struct {
+type OpeningResponse struct {
 	ID        uint      `json:"id"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
