@@ -1,5 +1,12 @@
 definitions:
-  handler.CreateOpeningRequest:
+  handler.ErrorResponse:
+    properties:
+      errorCode:
+        type: integer
+      message:
+        type: string
+    type: object
+  handler.HandlerOpeningRequest:
     properties:
       company:
         type: string
@@ -14,38 +21,19 @@ definitions:
       salary:
         type: integer
     type: object
-  handler.CreateOpeningResponse:
+  handler.HandlerOpeningResponse:
     properties:
       data:
         $ref: '#/definitions/schemas.OpeningResponse'
       message:
         type: string
     type: object
-  handler.DeleteOpeningResponse:
+  handler.ListOpeningResponse:
     properties:
       data:
-        $ref: '#/definitions/schemas.OpeningResponse'
-      message:
-        type: string
-    type: object
-  handler.ErrorResponse:
-    properties:
-      errorCode:
-        type: string
-      message:
-        type: string
-    type: object
-  handler.ShowOpeningResponse:
-    properties:
-      data:
-        $ref: '#/definitions/schemas.OpeningResponse'
-      message:
-        type: string
-    type: object
-  handler.UpdateOpeningResponse:
-    properties:
-      data:
-        $ref: '#/definitions/schemas.OpeningResponse'
+        items:
+          $ref: '#/definitions/schemas.OpeningResponse'
+        type: array
       message:
         type: string
     type: object
@@ -92,7 +80,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handler.DeleteOpeningResponse'
+            $ref: '#/definitions/handler.HandlerOpeningResponse'
         "400":
           description: Bad Request
           schema:
@@ -124,7 +112,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handler.ShowOpeningResponse'
+            $ref: '#/definitions/handler.HandlerOpeningResponse'
         "400":
           description: Bad Request
           schema:
@@ -146,14 +134,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/handler.CreateOpeningRequest'
+          $ref: '#/definitions/handler.HandlerOpeningRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handler.CreateOpeningResponse'
+            $ref: '#/definitions/handler.HandlerOpeningResponse'
         "400":
           description: Bad Request
           schema:
@@ -181,7 +169,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handler.UpdateOpeningResponse'
+            $ref: '#/definitions/handler.HandlerOpeningResponse'
         "400":
           description: Bad Request
           schema:
@@ -205,7 +193,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handler.ShowOpeningResponse'
+            $ref: '#/definitions/handler.ListOpeningResponse'
         "500":
           description: Internal Server Error
           schema:

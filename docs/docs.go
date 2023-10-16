@@ -41,7 +41,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handler.ShowOpeningResponse"
+                            "$ref": "#/definitions/handler.HandlerOpeningResponse"
                         }
                     },
                     "400": {
@@ -83,7 +83,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handler.UpdateOpeningResponse"
+                            "$ref": "#/definitions/handler.HandlerOpeningResponse"
                         }
                     },
                     "400": {
@@ -125,7 +125,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handler.CreateOpeningRequest"
+                            "$ref": "#/definitions/handler.HandlerOpeningRequest"
                         }
                     }
                 ],
@@ -133,7 +133,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handler.CreateOpeningResponse"
+                            "$ref": "#/definitions/handler.HandlerOpeningResponse"
                         }
                     },
                     "400": {
@@ -175,7 +175,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handler.DeleteOpeningResponse"
+                            "$ref": "#/definitions/handler.HandlerOpeningResponse"
                         }
                     },
                     "400": {
@@ -212,7 +212,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handler.ShowOpeningResponse"
+                            "$ref": "#/definitions/handler.ListOpeningResponse"
                         }
                     },
                     "500": {
@@ -226,7 +226,18 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "handler.CreateOpeningRequest": {
+        "handler.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "errorCode": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "handler.HandlerOpeningRequest": {
             "type": "object",
             "properties": {
                 "company": {
@@ -249,7 +260,7 @@ const docTemplate = `{
                 }
             }
         },
-        "handler.CreateOpeningResponse": {
+        "handler.HandlerOpeningResponse": {
             "type": "object",
             "properties": {
                 "data": {
@@ -260,44 +271,14 @@ const docTemplate = `{
                 }
             }
         },
-        "handler.DeleteOpeningResponse": {
+        "handler.ListOpeningResponse": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/schemas.OpeningResponse"
-                },
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "handler.ErrorResponse": {
-            "type": "object",
-            "properties": {
-                "errorCode": {
-                    "type": "string"
-                },
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "handler.ShowOpeningResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/schemas.OpeningResponse"
-                },
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "handler.UpdateOpeningResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/schemas.OpeningResponse"
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/schemas.OpeningResponse"
+                    }
                 },
                 "message": {
                     "type": "string"
