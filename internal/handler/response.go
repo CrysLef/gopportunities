@@ -8,44 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SendError(ctx *gin.Context, code int, msg string) {
-	ctx.Header("Content-type", "application/json")
-	ctx.JSON(code, gin.H{
-		"message":   msg,
-		"errorCode": code,
-	})
-}
-
-func SendSuccess(ctx *gin.Context, op string, data interface{}) {
-	ctx.Header("Content-type", "application/json")
-	ctx.JSON(http.StatusOK, gin.H{
-		"message": fmt.Sprintf("operation from handler: %s successful", op),
-		"data":    data,
-	})
-
-}
-
-type ErrorResponse struct {
-	Message   string `json:"message"`
-	ErrorCode string `json:"errorCode"`
-}
-
-type CreateOpeningResponse struct {
-	Message string                  `json:"message"`
-	Data    schemas.OpeningResponse `json:"data"`
-}
-
-type DeleteOpeningResponse struct {
-	Message string                  `json:"message"`
-	Data    schemas.OpeningResponse `json:"data"`
-}
-
-type UpdateOpeningResponse struct {
-	Message string                  `json:"message"`
-	Data    schemas.OpeningResponse `json:"data"`
-}
-
-type ShowOpeningResponse struct {
+type HandlerOpeningResponse struct {
 	Message string                  `json:"message"`
 	Data    schemas.OpeningResponse `json:"data"`
 }
@@ -53,4 +16,23 @@ type ShowOpeningResponse struct {
 type ListOpeningResponse struct {
 	Message string                    `json:"message"`
 	Data    []schemas.OpeningResponse `json:"data"`
+}
+
+type ErrorResponse struct {
+	Message   string `json:"message"`
+	ErrorCode int    `json:"errorCode"`
+}
+
+func sendError(ctx *gin.Context, errResponse ErrorResponse) {
+	ctx.Header("Content-type", "application/json")
+	ctx.JSON(errResponse.ErrorCode, errResponse)
+}
+
+func sendSuccess(ctx *gin.Context, op string, data interface{}) {
+	ctx.Header("Content-type", "application/json")
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": fmt.Sprintf("operation from handler: %s successful", op),
+		"data":    data,
+	})
+
 }
