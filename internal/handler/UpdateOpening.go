@@ -15,62 +15,74 @@ import (
 // @Accept 	json
 // @Produce json
 // @Param 	id query string true "Opening identification"
-// @Success 200 {object} UpdateOpeningResponse
+// @Success 200 {object} HandlerOpeningResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /opening [put]
 func UpdateOpeningHandler(ctx *gin.Context) {
-	request := UpdateOpeningRequest{}
+	opening := schemas.Opening{}
+	request := HandlerOpeningRequest{}
+	errResponse := ErrorResponse{}
 
 	ctx.BindJSON(&request)
 
-	err := request.Validate()
-	if err != nil {
-		logger.Errorf("validation error: %v", err.Error())
-		SendError(ctx, http.StatusBadRequest, err.Error())
+	if err := request.ValidateUpdate(); err != nil {
+		errResponse.Message = err.Error()
+		errResponse.ErrorCode = http.StatusBadRequest
+
+		logger.Errorf("validation error: %v", errResponse.Message)
+		sendError(ctx, errResponse)
 		return
 	}
 
 	id := ctx.Query("id")
 	if id == "" {
-		SendError(ctx, http.StatusBadRequest, errParamIsRequired("id", typeOf(id)).Error())
+		errResponse.Message = errParamIsRequired("id", typeOf(id)).Error()
+		errResponse.ErrorCode = http.StatusBadRequest
+
+		sendError(ctx, errResponse)
 		return
 	}
 
-	opening := schemas.Opening{}
-
-	err = db.First(&opening, id).Error
-	if err != nil {
-		SendError(ctx, http.StatusNotFound, fmt.Sprintf("opening with id: %s not found", id))
+	if err := db.First(&opening, id).Error; err != nil {
+		errResponse.Message = fmt.Sprintf("opening with id: %s not found", id)
+		errResponse.ErrorCode = http.StatusNotFound
+		sendError(ctx, errResponse)
 		return
 	}
 
 	if request.Role != "" {
 		opening.Role = request.Role
 	}
+
 	if request.Company != "" {
 		opening.Company = request.Company
 	}
+
 	if request.Location != "" {
 		opening.Location = request.Location
 	}
+
+	if request.Remote || !request.Remote {
+		opening.Remote = request.Remote
+	}
+
 	if request.Link != "" {
 		opening.Link = request.Link
 	}
-	if request.Remote != nil {
-		opening.Remote = *request.Remote
-	}
+
 	if request.Salary > 0 {
 		opening.Salary = request.Salary
 	}
 
-	err = db.Save(&opening).Error
-	if err != nil {
+	if err := db.Save(&opening).Error; err != nil {
+		errResponse.Message = "error updating opening"
+		errResponse.ErrorCode = http.StatusInternalServerError
 		logger.Errorf("Error updating opening: %v", err.Error())
-		SendError(ctx, http.StatusInternalServerError, "error updating opening")
+		sendError(ctx, errResponse)
 		return
 	}
 
-	SendSuccess(ctx, "update-opening", opening)
+	sendSuccess(ctx, "update-opening", opening)
 }
