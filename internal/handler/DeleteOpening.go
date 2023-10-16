@@ -15,31 +15,36 @@ import (
 // @Accept json
 // @Produce json
 // @Param	id query string true "Opening identification"
-// @Success 200 {object} DeleteOpeningResponse
+// @Success 200 {object} HandlerOpeningResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /opening [delete]
 func DeleteOpeningHandler(ctx *gin.Context) {
 	id := ctx.Query("id")
+	errResponse := ErrorResponse{}
 
 	if id == "" {
-		SendError(ctx, http.StatusBadRequest, errParamIsRequired("id", typeOf(id)).Error())
+		errResponse.Message = errParamIsRequired("id", typeOf(id)).Error()
+		errResponse.ErrorCode = http.StatusBadRequest
+		sendError(ctx, errResponse)
 		return
 	}
 	opening := schemas.Opening{}
 
-	err := db.First(&opening, id).Error
-	if err != nil {
-		SendError(ctx, http.StatusNotFound, fmt.Sprintf("opening with id: %s not found", id))
+	if err := db.First(&opening, id).Error; err != nil {
+		errResponse.Message = fmt.Sprintf("opening with id: %s not found", id)
+		errResponse.ErrorCode = http.StatusNotFound
+		sendError(ctx, errResponse)
 		return
 	}
 
-	err = db.Delete(&opening).Error
-	if err != nil {
-		SendError(ctx, http.StatusInternalServerError, fmt.Sprintf("error deleting opening with id: %s", id))
+	if err := db.Delete(&opening).Error; err != nil {
+		errResponse.Message = fmt.Sprintf("error deleting opening with id: %s", id)
+		errResponse.ErrorCode = http.StatusInternalServerError
+		sendError(ctx, errResponse)
 		return
 	}
 
-	SendSuccess(ctx, "deleting-opening", opening)
+	sendSuccess(ctx, "deleting-opening", opening)
 }
