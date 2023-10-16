@@ -11,17 +11,19 @@ import (
 // @Summary List opening
 // @Tags Openings
 // @Produce json
-// @Success 200 {object} ShowOpeningResponse
+// @Success 200 {object} ListOpeningResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /openings [get]
 func ListOpeningsHandler(ctx *gin.Context) {
 	openings := []schemas.Opening{}
+	errResponse := ErrorResponse{}
 
-	err := db.Find(&openings).Error
-	if err != nil {
-		SendError(ctx, http.StatusInternalServerError, "error listing openings")
+	if err := db.Find(&openings).Error; err != nil {
+		errResponse.Message = "error listing openings"
+		errResponse.ErrorCode = http.StatusInternalServerError
+		sendError(ctx, errResponse)
 		return
 	}
 
-	SendSuccess(ctx, "listing-openings", openings)
+	sendSuccess(ctx, "listing-openings", openings)
 }
